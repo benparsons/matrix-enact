@@ -49,7 +49,16 @@ class App extends Component {
     return (
       <div className="App">
       <table>
-        <tbody><tr>
+        <tbody>
+          <tr>
+            <td>Access token:</td>
+            <td colSpan="2">
+              <input type="text" value={this.state.accessToken}
+                onChange={evt => this.setState({accessToken: evt.target.value})}
+              />
+            </td>
+          </tr>
+        <tr>
           <td>Room:</td>
           <td><input type="text"
         value={this.state.roomEntry}
@@ -86,7 +95,6 @@ class App extends Component {
   }
 
   async loadScriptFromEventId() {
-    const access_token = "";
     var roomId = '';
     if (this.state.roomEntry[0] === "#") {
       var getIdUrl = "https://matrix.org/_matrix/client/r0/directory/room/";
@@ -100,7 +108,7 @@ class App extends Component {
       roomId = this.state.roomEntry;
     }
 
-    const url = `https://matrix.org/_matrix/client/r0/rooms/${encodeURIComponent(roomId)}/context/${encodeURIComponent(this.state.startEventId)}?limit=100&access_token=${access_token}`;
+    const url = `https://matrix.org/_matrix/client/r0/rooms/${encodeURIComponent(roomId)}/context/${encodeURIComponent(this.state.startEventId)}?limit=100&access_token=${this.state.accessToken}`;
 
     axios.get(url)
     .then(res => {
