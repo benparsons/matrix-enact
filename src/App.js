@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import axios from 'axios';
 
@@ -88,18 +87,20 @@ class App extends Component {
 
   async loadScriptFromEventId() {
     const access_token = "";
-
+    var roomId = '';
     if (this.state.roomEntry[0] === "#") {
       var getIdUrl = "https://matrix.org/_matrix/client/r0/directory/room/";
       getIdUrl += encodeURIComponent(this.state.roomEntry);
       const res = await axios.get(getIdUrl);
       const { data } = await res;
       this.setState({roomId: data.room_id});
+      roomId = data.room_id;
     } else {
       this.setState({roomId: this.state.roomEntry});
+      roomId = this.state.roomEntry;
     }
 
-    const url = `https://matrix.org/_matrix/client/r0/rooms/${encodeURIComponent(this.state.roomId)}/context/${encodeURIComponent(this.state.startEventId)}?limit=100&access_token=${access_token}`;
+    const url = `https://matrix.org/_matrix/client/r0/rooms/${encodeURIComponent(roomId)}/context/${encodeURIComponent(this.state.startEventId)}?limit=100&access_token=${access_token}`;
 
     axios.get(url)
     .then(res => {
@@ -159,10 +160,14 @@ class ScriptGrid extends Component {
 class Part extends Component {
   render() {
     const lines = this.props.lines.map((line, index) => {
+      var lineText = line.content.body.split('\n')
+                      .filter(l => l[0] !== '>' && l !== '')
+                      .join('\n');
+      lineText = lineText.replace( /(.*)\[(.*)\]\(.*\)(.*)/gm, `$1$2$3`);
       return (
         <Line
         key={"line"+index}
-        lineText={line.content.body.split('\n').filter(l => l[0] !== '>' && l !== '').join('\n')}
+        lineText={lineText}
         lineNumber={line.lineNumber}
         currentLine={this.props.currentLine}
         part={this.props.part}
