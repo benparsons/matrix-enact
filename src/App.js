@@ -91,6 +91,7 @@ class App extends Component {
         ></input></td>
         <td>
           <button disabled={this.state.loadDisabled} onClick={() => this.loadScriptFromEventId()}>Load</button>
+          <button onClick={() => window.location.reload()}>Stop&Refresh</button>
         </td>
         </tr>
         <tr>
