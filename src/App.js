@@ -39,7 +39,7 @@ class App extends Component {
       line: 0,
       roomEntry: '#matrix:matrix.org',
       startEventId: '$15451748443784682ewPHy:matrix.org',
-      messageCount: 20,
+      messageCount: 50,
       roomId: '',
       events: []
     }
@@ -62,6 +62,7 @@ class App extends Component {
       <table>
         <tbody>
         <tr>
+          <td rowspan="3"><h1>matrix-enact</h1></td>
           <td>Room:</td>
           <td><input type="text"
         value={this.state.roomEntry}
@@ -83,7 +84,7 @@ class App extends Component {
           <td><input type="number"
         value={this.state.messageCount}
         onChange={evt => this.setState({messageCount: evt.target.value})}
-        max="50" min="2"
+        max="200" min="2"
         ></input></td>
         </tr>
         </tbody>
@@ -97,8 +98,13 @@ class App extends Component {
     );
   }
 
-  async loadScriptFromEventId() {
+  async loadScriptFromEventId(startEventId) {
     var roomId = '';
+    var firstCall = false;
+    if (! startEventId) { 
+      startEventId = this.state.startEventId;
+      firstCall = true;
+    }
     if (this.state.roomEntry[0] === "#") {
       var getIdUrl = "https://matrix.org/_matrix/client/r0/directory/room/";
       getIdUrl += encodeURIComponent(this.state.roomEntry);
@@ -111,14 +117,26 @@ class App extends Component {
       roomId = this.state.roomEntry;
     }
 
-    const url = `https://matrix.org/_matrix/client/r0/rooms/${encodeURIComponent(roomId)}/context/${encodeURIComponent(this.state.startEventId)}?limit=100&access_token=${this.state.accessToken}`;
+    const url = `https://matrix.org/_matrix/client/r0/rooms/${encodeURIComponent(roomId)}/context/${encodeURIComponent(startEventId)}?limit=100&access_token=${this.state.accessToken}`;
 
     axios.get(url)
     .then(res => {
-      this.setState({events: [res.data.event].concat(res.data.events_after.filter(e => e.content.body))});
-      console.log(res.data);
-      this.nextLine();
-    })
+
+      var newEvents = [];
+      if (firstCall) { newEvents = [res.data.event] };
+      newEvents = newEvents.concat(res.data.events_after);
+      newEvents = newEvents.filter(e => e.content.body);
+      this.setState({events: this.state.events.concat(newEvents)});
+      if (firstCall) { this.nextLine(); }
+      console.log(this.state);
+      if (this.state.messageCount > this.state.events.length) {
+        // get last known event
+        var lastEvent = res.data.events_after[res.data.events_after.length - 1];
+        this.loadScriptFromEventId(lastEvent.event_id);
+      } else {
+        this.setState({events: this.state.events.slice(0, this.state.messageCount)});
+      }
+    });
 
   }
 
@@ -205,18 +223,18 @@ class Line extends Component {
     super(props);
     var utterance = new SpeechSynthesisUtterance();
     utterance.addEventListener('end', function () {
-      console.log("stopped: " + utterance.text);
+      //console.log("stopped: " + utterance.text);
     });
     var nextLine = this.props.nextLine;
     utterance.onend = function(a) {
-      console.log("ended: " + utterance.text);
+      //console.log("ended: " + utterance.text);
       nextLine();
     };
     utterance.text = this.props.lineText;
     utterance.voice = this.props.part.voice;
     window.utterances.push(utterance); // makes utterance.onend more reliable in Chrome. it's true!
     synth.speak(utterance);
-    console.log(utterance);
+    //console.log(utterance);
   }
 
   render() {
