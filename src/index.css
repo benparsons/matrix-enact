@@ -49,6 +49,11 @@ td {
   text-align: right;
 }
 
+.statusMessage {
+  border: solid 1px #ccc;
+  width: 140px;
+}
+
 @import url('https://rsms.me/inter/inter.css');
 html { font-family: 'Inter', sans-serif; }
 @supports (font-variation-settings: normal) {

@@ -82,7 +82,10 @@ class App extends Component {
         value={this.state.startEventId}
         onChange={evt => this.setState({startEventId: evt.target.value})}
         ></input></td>
-          <td rowSpan="2">{this.state.statusMessage}</td>
+          <td rowSpan="2" className="statusMessage">
+            Status:<br />
+            {this.state.statusMessage}
+          </td>
         </tr>
         <tr>
           <td>Message count:</td>
@@ -95,6 +98,7 @@ class App extends Component {
         </tbody>
         </table>
         </div></div>
+        <hr />
       <ScriptGrid
         parts={this.state.parts}
         currentLine={this.state.line}
@@ -141,7 +145,7 @@ class App extends Component {
         var lastEvent = res.data.events_after[res.data.events_after.length - 1];
         this.loadScriptFromEventId(lastEvent.event_id);
       } else {
-        this.setState({events: this.state.events.slice(0, this.state.messageCount), statusMessage: ""});
+        this.setState({events: this.state.events.slice(0, this.state.messageCount), statusMessage: "Done"});
       }
     });
 
