@@ -216,7 +216,7 @@ class Part extends Component {
     });
     var age = this.props.currentLine - Math.max(...this.props.lines.map(l => {return l.lineNumber}));
     const divStyle = {
-      display: age > 5 ? 'none' : 'initial'
+      display: age > 8 ? 'none' : 'initial'
     };
     return (
       <div 
