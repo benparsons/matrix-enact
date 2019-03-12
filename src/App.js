@@ -45,19 +45,22 @@ class App extends Component {
     }
   }
 
+  async setGuestAccessToken() {
+
+    if (this.state.accessToken) return;
+
+    var url = "https://matrix.org/_matrix/client/r0/register?kind=guest";
+    const res = await axios.post(url, {});
+    const { data } = await res;
+    this.setState({accessToken: data.access_token});
+  }
+
   render() {
+    this.setGuestAccessToken();
     return (
       <div className="App">
       <table>
         <tbody>
-          <tr>
-            <td>Access token:</td>
-            <td colSpan="2">
-              <input type="text" value={this.state.accessToken}
-                onChange={evt => this.setState({accessToken: evt.target.value})}
-              />
-            </td>
-          </tr>
         <tr>
           <td>Room:</td>
           <td><input type="text"
