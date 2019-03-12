@@ -59,6 +59,9 @@ class App extends Component {
     this.setGuestAccessToken();
     return (
       <div className="App">
+
+<div className="container-outer">
+        <div className="container-inner">
       <table>
         <tbody>
         <tr>
@@ -89,6 +92,7 @@ class App extends Component {
         </tr>
         </tbody>
         </table>
+        </div></div>
       <ScriptGrid
         parts={this.state.parts}
         currentLine={this.state.line}
