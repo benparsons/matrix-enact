@@ -41,8 +41,10 @@ class App extends Component {
       startEventId: '$15451748443784682ewPHy:matrix.org',
       messageCount: 50,
       roomId: '',
-      events: []
+      events: [],
+      statusMessage: "Loading..."
     }
+    this.setGuestAccessToken();
   }
 
   async setGuestAccessToken() {
@@ -52,11 +54,10 @@ class App extends Component {
     var url = "https://matrix.org/_matrix/client/r0/register?kind=guest";
     const res = await axios.post(url, {});
     const { data } = await res;
-    this.setState({accessToken: data.access_token});
+    this.setState({accessToken: data.access_token, statusMessage: "Ready"});
   }
 
   render() {
-    this.setGuestAccessToken();
     return (
       <div className="App">
 
@@ -81,6 +82,7 @@ class App extends Component {
         value={this.state.startEventId}
         onChange={evt => this.setState({startEventId: evt.target.value})}
         ></input></td>
+          <td rowSpan="2">{this.state.statusMessage}</td>
         </tr>
         <tr>
           <td>Message count:</td>
@@ -103,6 +105,7 @@ class App extends Component {
   }
 
   async loadScriptFromEventId(startEventId) {
+    this.setState({statusMessage: "Loading events"})
     var roomId = '';
     var firstCall = false;
     if (! startEventId) { 
@@ -138,7 +141,7 @@ class App extends Component {
         var lastEvent = res.data.events_after[res.data.events_after.length - 1];
         this.loadScriptFromEventId(lastEvent.event_id);
       } else {
-        this.setState({events: this.state.events.slice(0, this.state.messageCount)});
+        this.setState({events: this.state.events.slice(0, this.state.messageCount), statusMessage: ""});
       }
     });
 
