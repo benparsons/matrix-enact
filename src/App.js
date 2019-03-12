@@ -47,6 +47,23 @@ class App extends Component {
     this.setGuestAccessToken();
   }
 
+  componentDidMount() {
+
+    this.setDefaultsFromHash();
+  }
+
+  async setDefaultsFromHash() {
+    if (window.location.hash) {
+      var hash = window.location.hash.split("/");
+      if (hash.length < 3) return;
+
+      this.setState({
+        roomEntry: hash[1],
+        startEventId: hash[2],  
+      })
+    }
+  }
+
   async setGuestAccessToken() {
 
     if (this.state.accessToken) return;
@@ -73,7 +90,7 @@ class App extends Component {
         onChange={evt => this.setState({roomEntry: evt.target.value})}
         ></input></td>
         <td>
-          <button onClick={() => this.loadScriptFromEventId()}>Load</button>
+          <button disabled={this.state.loadDisabled} onClick={() => this.loadScriptFromEventId()}>Load</button>
         </td>
         </tr>
         <tr>
@@ -109,7 +126,7 @@ class App extends Component {
   }
 
   async loadScriptFromEventId(startEventId) {
-    this.setState({statusMessage: "Loading events"})
+    this.setState({statusMessage: "Loading events", loadDisabled: true})
     var roomId = '';
     var firstCall = false;
     if (! startEventId) { 
