@@ -15,3 +15,5 @@ yarn start
 The project does not depend on [matrix-js-sdk](https://github.com/matrix-org/matrix-js-sdk/), but makes calls directly.
 
 There is a working version available at <https://play.matrix.org/matrix-enact>.
+
+It's also possible to link directly to specific events as follows: <https://play.matrix.org/matrix-enact/#/#thisweekinmatrix:matrix.org/$1552129278349001lQeYw:matrix.org>.
