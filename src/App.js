@@ -62,7 +62,7 @@ class App extends Component {
       <table>
         <tbody>
         <tr>
-          <td rowspan="3"><h1>matrix-enact</h1></td>
+          <td rowSpan="3"><h1>matrix-enact</h1></td>
           <td>Room:</td>
           <td><input type="text"
         value={this.state.roomEntry}
