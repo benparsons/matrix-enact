@@ -146,6 +146,7 @@ class App extends Component {
       roomId = this.state.roomEntry;
     }
 
+    // first we construct the url as per the CS API
     const url = `https://matrix.org/_matrix/client/r0/rooms/${encodeURIComponent(roomId)}/context/${encodeURIComponent(startEventId)}?limit=100&access_token=${this.state.accessToken}`;
 
     axios.get(url)
