@@ -67,11 +67,14 @@ class App extends Component {
   async setGuestAccessToken() {
 
     if (this.state.accessToken) return;
-
-    var url = "https://matrix.org/_matrix/client/r0/register?kind=guest";
-    const res = await axios.post(url, {});
-    const { data } = await res;
-    this.setState({accessToken: data.access_token, statusMessage: "Ready"});
+    try {
+      var url = "https://matrix.org/_matrix/client/r0/register?kind=guest";
+      const res = await axios.post(url, {});
+      const { data } = await res;
+      this.setState({accessToken: data.access_token, statusMessage: "Ready"});
+    } catch (error) {
+      window._paq.push(['trackEvent', 'matrix-enact', 'error-2', error]);
+    }
   }
 
   render() {
@@ -90,7 +93,12 @@ class App extends Component {
         onChange={evt => this.setState({roomEntry: evt.target.value})}
         ></input></td>
         <td>
-          <button disabled={this.state.loadDisabled} onClick={() => this.loadScriptFromEventId()}>Load</button>
+          <button
+            disabled={this.state.loadDisabled}
+            onClick={() => {
+              window._paq.push(['trackEvent', 'matrix-enact', 'LoadButton', 'Clicked']);
+              this.loadScriptFromEventId()
+            }}>Load</button>
           <button onClick={() => window.location.reload()}>Stop&Refresh</button>
         </td>
         </tr>
@@ -135,12 +143,17 @@ class App extends Component {
       firstCall = true;
     }
     if (this.state.roomEntry[0] === "#") {
-      var getIdUrl = "https://matrix.org/_matrix/client/r0/directory/room/";
-      getIdUrl += encodeURIComponent(this.state.roomEntry);
-      const res = await axios.get(getIdUrl);
-      const { data } = await res;
-      this.setState({roomId: data.room_id});
-      roomId = data.room_id;
+      try {
+        var getIdUrl = "https://matrix.org/_matrix/client/r0/directory/room/";
+        getIdUrl += encodeURIComponent(this.state.roomEntry);
+        const res = await axios.get(getIdUrl);
+        const { data } = await res;
+        this.setState({roomId: data.room_id});
+        roomId = data.room_id;
+      } catch (error) {
+        console.log(error);
+        window._paq.push(['trackEvent', 'matrix-enact', 'error-3', error]);
+      }
     } else {
       this.setState({roomId: this.state.roomEntry});
       roomId = this.state.roomEntry;
@@ -166,6 +179,10 @@ class App extends Component {
       } else {
         this.setState({events: this.state.events.slice(0, this.state.messageCount), statusMessage: "Done"});
       }
+    })
+    .catch(function (error) {
+      console.log(error);
+      window._paq.push(['trackEvent', 'matrix-enact', 'error-1', error]);
     });
 
   }
