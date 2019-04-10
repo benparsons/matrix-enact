@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import axios from 'axios';
+import Modal from 'react-modal';
 
 var synth = window.speechSynthesis;
 var voices = [];
@@ -30,6 +31,8 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
+Modal.setAppElement('#root')
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -42,14 +45,20 @@ class App extends Component {
       messageCount: 50,
       roomId: '',
       events: [],
-      statusMessage: "Loading..."
+      statusMessage: "Loading...",
+      modalIsOpen: true
     }
+    this.closeModal = this.closeModal.bind(this);
     this.setGuestAccessToken();
   }
 
   componentDidMount() {
 
     this.setDefaultsFromHash();
+  }
+
+  closeModal() {
+    this.setState({modalIsOpen: false});
   }
 
   async setDefaultsFromHash() {
@@ -80,6 +89,28 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+        <Modal
+          isOpen={this.state.modalIsOpen}
+          onAfterOpen={this.afterOpenModal}
+          onRequestClose={this.closeModal}
+          style={{content : {
+              top                   : '50%',
+              left                  : '50%',
+              right                 : 'auto',
+              bottom                : 'auto',
+              marginRight           : '-50%',
+              transform             : 'translate(-50%, -50%)'
+            }
+          }}
+          contentLabel="Modal"
+        >
+          <h2 ref={subtitle => this.subtitle = subtitle}>Welcome to matrix-enact</h2>
+          <div>matrix-enact "performs" the history from public Matrix rooms.</div>
+          <div>Just give it a room id (or alias) a message ID to begin from and a message count,<br />and it will use the voices in your browser to read
+            the history of the room.
+          </div>
+          <div><button onClick={this.closeModal}>close</button></div>
+        </Modal>
 
 <div className="container-outer">
         <div className="container-inner">
