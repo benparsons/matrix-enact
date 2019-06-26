@@ -41,7 +41,7 @@ class App extends Component {
       script: [],
       line: 0,
       roomEntry: '#matrix:matrix.org',
-      startEventId: '$15451748443784682ewPHy:matrix.org',
+      startEventId: '$1561541048242207hqsBl:matrix.org',
       messageCount: 50,
       roomId: '',
       events: [],
